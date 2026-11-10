@@ -8,7 +8,6 @@
 [![MongoDB Isolated Port 27018](https://img.shields.io/badge/MongoDB-Port_27018-47A248?style=flat&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
 [![React 19 & Vite](https://img.shields.io/badge/Frontend-React_19_+_Vite-61DAFB?style=flat&logo=react&logoColor=black)](https://react.dev/)
 [![FastAPI Python 3.13](https://img.shields.io/badge/Backend-FastAPI_0.115-009688?style=flat&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
-[![Unslop UI Craft](https://img.shields.io/badge/UI_Design-Unslop_Craft-black?style=flat)](https://github.com/heydamir/unslop)
 
 ---
 
@@ -95,36 +94,80 @@ PayPilot AI is deeply engineered with official PayPal developer standards:
 
 ---
 
-## 🎨 Design Philosophy: `unslop` UI Craft & Dual Theme
+## 🎨 Clean UI Craft & Dual Theme
 
-The user interface follows the design principles established in [heydamir/unslop](https://github.com/heydamir/unslop):
+The user interface is built with deliberate craftsmanship and clarity:
 - **Quiet Chrome:** Navigation bars, sidebars, borders, and card backgrounds remain calm and unobtrusive (`slate-950` / `zinc-900` palette), directing richness toward real product photos, charts, and transaction receipts.
-- **Zero AI-Slop Tells:** No rainbow purple-to-cyan gradients, no gradient text in headings, no fuzzy neon drop shadows (`shadow-blue-500/30`), and no emoji icons in headers.
-- **Strict 4px Spacing Grid:** All padding, margins, and gaps adhere to a uniform 4px scale.
-- **Light & Dark Mode:** Integrated theme context with persistent `localStorage` retention and dynamic 1-click toggling (☀️ / 🌙) in the navigation header.
+- **Modern Simplicity:** Crisp typography, solid button states, hairline borders at 10% opacity, and single-stroke line icons.
+- **Strict 4px Spacing Grid:** All padding, margins, and gaps adhere to a uniform 4px scale (`4px`, `8px`, `12px`, `16px`, `24px`, `32px`).
+- **Light & Dark Mode:** Integrated theme context with persistent `localStorage` retention and dynamic 1-click toggling (☀️ / 🌙) directly in the navigation header.
 
 ---
 
-## 🛡️ Dedicated Database Architecture & Connection Strings
+## 🗄️ Step-by-Step MongoDB Setup Guide
 
-PayPilot AI supports both local dedicated instances and MongoDB Atlas Cloud configurations:
+PayPilot AI is pre-configured to use a dedicated, isolated MongoDB server on **Port 27018** (`paypilot_ai_db`), preventing any conflict with default databases running on port 27017.
 
-### Primary Dedicated MongoDB Instance (Port 27018 Isolated):
+Follow these steps to set up and run the database:
+
+### Step 1: Create the Dedicated Data Directory
+Create the folder where PayPilot AI stores its database files and server logs:
+```powershell
+New-Item -ItemType Directory -Path "C:\data\paypilot-mongodb" -Force
+```
+
+### Step 2: Create the MongoDB Configuration File (`mongod.cfg`)
+Save a configuration file at `C:\data\paypilot-mongodb\mongod.cfg` with the following content:
+```yaml
+storage:
+  dbPath: "C:/data/paypilot-mongodb"
+
+systemLog:
+  destination: file
+  path: "C:/data/paypilot-mongodb/mongod.log"
+  logAppend: true
+
+net:
+  port: 27018
+  bindIp: 127.0.0.1
+```
+
+### Step 3: Start the MongoDB Server on Port 27018
+Launch the dedicated mongod instance using PowerShell:
+```powershell
+& "C:\Program Files\MongoDB\Server\8.3\bin\mongod.exe" --config "C:\data\paypilot-mongodb\mongod.cfg"
+```
+*(If your MongoDB installation is in another version directory, e.g. `Server\7.0`, simply adjust the path to your `mongod.exe`).*
+
+### Step 4: Configure Backend Environment Variables
+In your `backend/.env` file, configure the connection URI:
 ```env
 MONGODB_URI=mongodb://127.0.0.1:27018/paypilot_ai_db
 MONGODB_DATABASE=paypilot_ai_db
 ```
-- **Local Connection URL:** `mongodb://127.0.0.1:27018/paypilot_ai_db`
-- **Data Directory:** `C:\data\paypilot-mongodb`
-- **Isolation Safeguard:** Strict runtime socket verification ensures port `27017` (reserved for live lab databases) is never touched or modified.
 
-### MongoDB Atlas Cloud URL (Cloud Alternative):
+### Step 5 (Optional): Connect via MongoDB Atlas (Cloud)
+If you prefer to host the database on the cloud with MongoDB Atlas:
+1. Create a free cluster on [MongoDB Atlas](https://www.mongodb.com/cloud/atlas).
+2. Create a database user and allow your IP address in Network Access.
+3. Update `backend/.env`:
 ```env
 MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/paypilot_ai_db?retryWrites=true&w=majority
 MONGODB_DATABASE=paypilot_ai_db
 ```
 
-### Key MongoDB Collections (22 Collections):
+### Step 6: Verify Database Connectivity & Collections
+When you start the FastAPI backend, it automatically creates indexes, seeds the demo user, and populates 250+ catalog products:
+```powershell
+cd backend
+python -c "import asyncio; from app.database.connection import MongoDBManager; asyncio.run(MongoDBManager.connect())"
+```
+You should see:
+```text
+[PayPilot MongoDB Isolated Instance] Connected successfully to 'paypilot_ai_db' on mongodb://127.0.0.1:27018/paypilot_ai_db
+```
+
+### Supported Collections (22 Collections):
 `users`, `user_profiles`, `user_addresses`, `products`, `product_sources`, `shopping_carts`, `cart_items`, `checkout_sessions`, `saved_payment_methods`, `purchase_orders`, `order_items`, `payment_orders`, `payment_captures`, `upi_payments`, `transactions`, `user_wallets`, `wallet_transactions`, `refunds`, `coupons`, `invoices`, `fraud_alerts`, `agent_execution_logs`.
 
 ---
@@ -136,8 +179,7 @@ MONGODB_DATABASE=paypilot_ai_db
 - Node.js 18+ & npm
 - MongoDB Server (installed locally)
 
-### 1. Dedicated MongoDB Server (Port 27018)
-Start the isolated PayPilot MongoDB instance:
+### 1. Start MongoDB Server
 ```powershell
 & "C:\Program Files\MongoDB\Server\8.3\bin\mongod.exe" --config "C:\data\paypilot-mongodb\mongod.cfg"
 ```
