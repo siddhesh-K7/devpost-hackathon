@@ -105,15 +105,26 @@ The user interface follows the design principles established in [heydamir/unslop
 
 ---
 
-## 🛡️ Dedicated Database Architecture & Isolation
+## 🛡️ Dedicated Database Architecture & Connection Strings
 
-PayPilot AI communicates exclusively with a dedicated, isolated MongoDB server:
-- **Port:** `127.0.0.1:27018`
-- **Database:** `paypilot_ai_db`
+PayPilot AI supports both local dedicated instances and MongoDB Atlas Cloud configurations:
+
+### Primary Dedicated MongoDB Instance (Port 27018 Isolated):
+```env
+MONGODB_URI=mongodb://127.0.0.1:27018/paypilot_ai_db
+MONGODB_DATABASE=paypilot_ai_db
+```
+- **Local Connection URL:** `mongodb://127.0.0.1:27018/paypilot_ai_db`
 - **Data Directory:** `C:\data\paypilot-mongodb`
-- **Isolation Safeguard:** Strict boundary validation ensures port `27017` (reserved exclusively for existing live databases) is never accessed or modified.
+- **Isolation Safeguard:** Strict runtime socket verification ensures port `27017` (reserved for live lab databases) is never touched or modified.
 
-### Key MongoDB Collections:
+### MongoDB Atlas Cloud URL (Cloud Alternative):
+```env
+MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/paypilot_ai_db?retryWrites=true&w=majority
+MONGODB_DATABASE=paypilot_ai_db
+```
+
+### Key MongoDB Collections (22 Collections):
 `users`, `user_profiles`, `user_addresses`, `products`, `product_sources`, `shopping_carts`, `cart_items`, `checkout_sessions`, `saved_payment_methods`, `purchase_orders`, `order_items`, `payment_orders`, `payment_captures`, `upi_payments`, `transactions`, `user_wallets`, `wallet_transactions`, `refunds`, `coupons`, `invoices`, `fraud_alerts`, `agent_execution_logs`.
 
 ---
