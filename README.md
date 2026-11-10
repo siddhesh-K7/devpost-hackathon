@@ -208,6 +208,34 @@ npm run dev
 
 ---
 
+## ☁️ Deployment Guide (Netlify)
+
+The PayPilot AI frontend is pre-configured with `netlify.toml` and Single Page Application (SPA) redirect rules (`_redirects`) for continuous deployment from GitHub.
+
+### Deploying the Frontend to Netlify:
+
+1. **Log in to Netlify:**
+   - Go to [app.netlify.com](https://app.netlify.com) and log in with your GitHub account.
+
+2. **Import Existing Project:**
+   - Click **"Add new site"** $\rightarrow$ **"Import an existing project"**.
+   - Select **GitHub** and authorize access to `siddhesh-K7/devpost-hackathon`.
+
+3. **Configure Build Settings (Pre-Configured via `netlify.toml`):**
+   - **Base directory:** `frontend`
+   - **Build command:** `npm run build`
+   - **Publish directory:** `frontend/dist`
+
+4. **Add Environment Variables in Netlify:**
+   Under **Site configuration > Environment variables**, add:
+   - `VITE_API_URL`: Your deployed backend API URL (e.g. `https://your-paypilot-backend.onrender.com` or `https://your-api.railway.app`).
+   - `VITE_PAYPAL_CLIENT_ID`: `AeA1QIZXiflr1__30svdpA6auTNd3Wjhbv8wBDukEbpKdW5m0bqaDCBP38NUHRmpWNX2_2mTATP4A13a`
+
+5. **Deploy Site:**
+   - Click **"Deploy site"**. Netlify will build and deploy the React 19 application with full SPA client-side routing.
+
+---
+
 ## 👤 Pre-Seeded Demonstration Account
 
 - **Email:** `demo@paypilot.ai`
